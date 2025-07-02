@@ -490,4 +490,77 @@ html {
 
 .book-card:nth-child(3) {
     animation-delay: 0.4s;
+}
+
+.custom-book-form-section {
+    background: #fff;
+    padding: 80px 0 100px 0;
+}
+
+.custom-form-title {
+    font-size: 32px;
+    color: #462A1F;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 700;
+}
+
+.custom-book-form {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background: #f9f6f1;
+    padding: 32px 24px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.custom-book-form label {
+    font-size: 16px;
+    color: #89695D;
+    font-weight: 500;
+}
+
+.custom-book-form input,
+.custom-book-form textarea {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 12px 16px;
+    border: 1px solid #e0d6c3;
+    border-radius: 8px;
+    background: #fff;
+    color: #462A1F;
+    resize: none;
+    transition: border 0.2s;
+}
+
+.custom-book-form input:focus,
+.custom-book-form textarea:focus {
+    border: 1.5px solid #34A469;
+    outline: none;
+}
+
+.custom-book-form .cta-button {
+    margin-top: 12px;
+    align-self: flex-end;
+}
+
+@media (max-width: 768px) {
+    .custom-book-form-section {
+        padding: 40px 0 60px 0;
+    }
+    .custom-form-title {
+        font-size: 22px;
+    }
+    .custom-book-form {
+        padding: 20px 8px;
+    }
 } 

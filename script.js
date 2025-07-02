@@ -252,6 +252,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const style = document.createElement('style');
     style.textContent = mobileMenuCSS;
     document.head.appendChild(style);
+
+    // Custom Book Form Submission
+    const customForm = document.querySelector('.custom-book-form');
+    if (customForm) {
+        customForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('custom-email').value.trim();
+            const description = document.getElementById('custom-description').value.trim();
+            if (!email || !description) return;
+            try {
+                const { error } = await supabaseClient
+                    .from('custom_form')
+                    .insert([{ email, description }]);
+                if (error) {
+                    alert('There was an error submitting your request. Please try again.');
+                } else {
+                    alert('Thank you! Your request has been submitted.');
+                    customForm.reset();
+                }
+            } catch (err) {
+                alert('There was an error submitting your request. Please try again.');
+            }
+        });
+    }
 });
 
 // Utility function for showing book modal (placeholder)
