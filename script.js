@@ -1,3 +1,9 @@
+
+
+// Supabase initialization
+const supabaseUrl = 'https://axygfmjqwqjioypcqdmo.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4eWdmbWpxd3FqaW95cGNxZG1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzODE1MzksImV4cCI6MjA2Njk1NzUzOX0.hyo42u0L9cV5EWMTvstQxJQfHFq2Ry0U-16_DBaspJc';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 // Smooth scrolling for navigation links
 document.addEventListener('DOMContentLoaded', function() {
     // Smooth scrolling for navigation links
@@ -60,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             handleBookClick(bookTitle);
             
             // You can add modal functionality or redirect to book details page here
-            alert(`Opening details for: ${bookTitle}`);
+            //alert(`Opening details for: ${bookTitle}`);
             
             // Example: Open a modal or redirect
             // showBookModal(bookTitle);
@@ -313,15 +319,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Supabase initialization
-const supabaseUrl = 'https://axygfmjqwqjioypcqdmo.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4eWdmbWpxd3FqaW95cGNxZG1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzODE1MzksImV4cCI6MjA2Njk1NzUzOX0.hyo42u0L9cV5EWMTvstQxJQfHFq2Ry0U-16_DBaspJc';
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
 // Function to handle book click and save to Supabase
 async function handleBookClick(bookName) {
     // Check if the book exists
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from('ebooks')
         .select('*')
         .eq('name', bookName)
@@ -335,7 +336,7 @@ async function handleBookClick(bookName) {
 
     if (data) {
         // Book exists, increment count
-        const { error: updateError } = await supabase
+        const { error: updateError } = await supabaseClient
             .from('ebooks')
             .update({ count: data.count + 1 })
             .eq('name', bookName);
@@ -345,7 +346,7 @@ async function handleBookClick(bookName) {
         }
     } else {
         // Book does not exist, insert new row with count 1
-        const { error: insertError } = await supabase
+        const { error: insertError } = await supabaseClient
             .from('ebooks')
             .insert([{ name: bookName, count: 1 }]);
 
