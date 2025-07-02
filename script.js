@@ -58,10 +58,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewBookButtons = document.querySelectorAll('.view-book-btn');
     
     viewBookButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', async function() {
             const bookCard = this.closest('.book-card');
             const bookTitle = bookCard.querySelector('.book-title').textContent.trim();
-            handleBookClick(bookTitle);
+            const success = await handleBookClick(bookTitle);
+
+            if (!success) {
+                alert('There was an error recording your download. Please try again.');
+                return;
+            }
 
             // Download the corresponding PDF
             const pdfFile = getPdfFileName(bookTitle);
@@ -348,38 +353,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to handle book click and save to Supabase
 async function handleBookClick(bookName) {
-    // Check if the book exists
-    const { data, error } = await supabaseClient
-        .from('ebooks')
-        .select('*')
-        .eq('name', bookName)
-        .single();
-
-    if (error && error.code !== 'PGRST116') {
-        // Not a "no rows" error, so log it
-        console.error('Supabase error:', error);
-        return;
-    }
-
-    if (data) {
-        // Book exists, increment count
-        const { error: updateError } = await supabaseClient
+    try {
+        // Check if the book exists
+        const { data, error } = await supabaseClient
             .from('ebooks')
-            .update({ count: data.count + 1 })
-            .eq('name', bookName);
+            .select('*')
+            .eq('name', bookName)
+            .single();
 
-        if (updateError) {
-            console.error('Update error:', updateError);
+        if (error && error.code !== 'PGRST116') {
+            // Not a "no rows" error, so log it
+            console.error('Supabase error:', error);
+            return false;
         }
-    } else {
-        // Book does not exist, insert new row with count 1
-        const { error: insertError } = await supabaseClient
-            .from('ebooks')
-            .insert([{ name: bookName, count: 1 }]);
 
-        if (insertError) {
-            console.error('Insert error:', insertError);
+        if (data) {
+            // Book exists, increment count
+            const { error: updateError } = await supabaseClient
+                .from('ebooks')
+                .update({ count: data.count + 1 })
+                .eq('name', bookName);
+
+            if (updateError) {
+                console.error('Update error:', updateError);
+                return false;
+            }
+        } else {
+            // Book does not exist, insert new row with count 1
+            const { error: insertError } = await supabaseClient
+                .from('ebooks')
+                .insert([{ name: bookName, count: 1 }]);
+
+            if (insertError) {
+                console.error('Insert error:', insertError);
+                return false;
+            }
         }
+        return true;
+    } catch (err) {
+        console.error('Unexpected error:', err);
+        return false;
     }
 }
 
