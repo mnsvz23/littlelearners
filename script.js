@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
     viewBookButtons.forEach(button => {
         button.addEventListener('click', function() {
             const bookCard = this.closest('.book-card');
-            const bookTitle = bookCard.querySelector('.book-title').textContent;
+            const bookTitle = bookCard.querySelector('.book-title').textContent.trim();
+            handleBookClick(bookTitle);
             
             // You can add modal functionality or redirect to book details page here
             alert(`Opening details for: ${bookTitle}`);
@@ -310,4 +311,46 @@ document.addEventListener('DOMContentLoaded', function() {
         const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
         progressBar.style.width = scrolled + '%';
     });
-}); 
+});
+
+// Supabase initialization
+const supabaseUrl = 'https://axygfmjqwqjioypcqdmo.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4eWdmbWpxd3FqaW95cGNxZG1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzODE1MzksImV4cCI6MjA2Njk1NzUzOX0.hyo42u0L9cV5EWMTvstQxJQfHFq2Ry0U-16_DBaspJc';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+// Function to handle book click and save to Supabase
+async function handleBookClick(bookName) {
+    // Check if the book exists
+    const { data, error } = await supabase
+        .from('ebooks')
+        .select('*')
+        .eq('name', bookName)
+        .single();
+
+    if (error && error.code !== 'PGRST116') {
+        // Not a "no rows" error, so log it
+        console.error('Supabase error:', error);
+        return;
+    }
+
+    if (data) {
+        // Book exists, increment count
+        const { error: updateError } = await supabase
+            .from('ebooks')
+            .update({ count: data.count + 1 })
+            .eq('name', bookName);
+
+        if (updateError) {
+            console.error('Update error:', updateError);
+        }
+    } else {
+        // Book does not exist, insert new row with count 1
+        const { error: insertError } = await supabase
+            .from('ebooks')
+            .insert([{ name: bookName, count: 1 }]);
+
+        if (insertError) {
+            console.error('Insert error:', insertError);
+        }
+    }
+} 
