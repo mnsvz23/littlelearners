@@ -1,5 +1,3 @@
-
-
 // Supabase initialization
 const supabaseUrl = 'https://axygfmjqwqjioypcqdmo.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4eWdmbWpxd3FqaW95cGNxZG1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzODE1MzksImV4cCI6MjA2Njk1NzUzOX0.hyo42u0L9cV5EWMTvstQxJQfHFq2Ry0U-16_DBaspJc';
@@ -64,12 +62,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const bookCard = this.closest('.book-card');
             const bookTitle = bookCard.querySelector('.book-title').textContent.trim();
             handleBookClick(bookTitle);
-            
-            // You can add modal functionality or redirect to book details page here
-            //alert(`Opening details for: ${bookTitle}`);
-            
-            // Example: Open a modal or redirect
-            // showBookModal(bookTitle);
+
+            // Download the corresponding PDF
+            const pdfFile = getPdfFileName(bookTitle);
+            if (pdfFile) {
+                const link = document.createElement('a');
+                link.href = `assets/${pdfFile}`;
+                link.download = pdfFile;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         });
     });
 
@@ -167,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Only show hamburger on mobile
         if (window.innerWidth <= 768) {
-            navbar.appendChild(hamburger);
+            navbar.prepend(hamburger);
         }
     }
 
@@ -353,5 +356,18 @@ async function handleBookClick(bookName) {
         if (insertError) {
             console.error('Insert error:', insertError);
         }
+    }
+}
+
+function getPdfFileName(bookTitle) {
+    switch (bookTitle) {
+        case "Savitri, the brave":
+            return "savitri.pdf";
+        case "Pocket Sized Forest":
+            return "pocket-forest.pdf";
+        case "Mira & sugar bugs":
+            return "mira-sugar-bugs.pdf";
+        default:
+            return null;
     }
 } 

@@ -377,6 +377,10 @@ body {
         left: auto;
     }
     
+    .navbar {
+        /* margin-top: 50px; */
+        padding: 0px;
+    }   
     .logo {
         margin-bottom: 0;
         margin-left: 12px;
@@ -388,7 +392,7 @@ body {
     }
     
     .hero {
-        margin-top: 100px;
+        margin-top: 20px;
     }
     
     .hero-container {
